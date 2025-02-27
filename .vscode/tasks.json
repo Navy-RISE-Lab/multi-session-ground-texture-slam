@@ -1,0 +1,77 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "DVC Repro",
+            "command": [
+                "dvc",
+                "repro"
+            ],
+            "type": "shell",
+            "dependsOrder": "parallel",
+            "dependsOn": [
+                "Repro: KLD",
+                "Repro: Odometry",
+                "Repro: Overlap",
+                "Repro: Single"
+            ]
+        },
+        {
+            "label": "Repro: KLD",
+            "command": [
+                "dvc",
+                "repro",
+                "run@kld"
+            ],
+            "type": "shell",
+            "dependsOn": [
+                "Repro: Measurement"
+            ]
+        },
+        {
+            "label": "Repro: Odometry",
+            "command": [
+                "dvc",
+                "repro",
+                "run@odometry"
+            ],
+            "type": "shell",
+            "dependsOn": [
+                "Repro: Measurement"
+            ]
+        },
+        {
+            "label": "Repro: Overlap",
+            "command": [
+                "dvc",
+                "repro",
+                "run@overlap"
+            ],
+            "type": "shell",
+            "dependsOn": [
+                "Repro: Measurement"
+            ]
+        },
+        {
+            "label": "Repro: Single",
+            "command": [
+                "dvc",
+                "repro",
+                "run@single"
+            ],
+            "type": "shell",
+            "dependsOn": [
+                "Repro: Measurement"
+            ]
+        },
+        {
+            "label": "Repro: Measurement",
+            "command": [
+                "dvc",
+                "repro",
+                "load_measurements"
+            ],
+            "type": "shell"
+        }
+    ]
+}

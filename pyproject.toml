@@ -1,0 +1,11 @@
+[tool.ruff]
+  line-length    = 79
+  src            = ["src"]
+  target-version = "py310"
+
+[tool.ruff.lint]
+  ignore = ["S301"]
+  select = ["ALL"]
+
+[tool.ruff.lint.pydocstyle]
+  convention = "numpy"

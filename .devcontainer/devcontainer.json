@@ -1,0 +1,33 @@
+{
+    "name": "GTSLAM Eval",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "containerEnv": {
+        "PYTHONPATH": "${containerWorkspaceFolder}/src"
+    },
+    "containerUser": "user",
+    "mounts": [
+        "source=${localWorkspaceFolder}/../data,target=/data,type=bind,readonly"
+    ],
+    "runArgs": [
+        "--name",
+        "${localWorkspaceFolderBasename}"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "bierner.markdown-mermaid",
+                "charliermarsh.ruff",
+                "donjayamanne.python-environment-manager",
+                "Iterative.dvc",
+                "ms-python.python",
+                "njpwerner.autodocstring",
+                "redhat.vscode-yaml",
+                "streetsidesoftware.code-spell-checker",
+                "tamasfe.even-better-toml"
+            ]
+        }
+    },
+    "postCreateCommand": "pip install --user -r requirements.txt"
+}

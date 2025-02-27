@@ -1,0 +1,162 @@
+stages:
+  load_measurements:
+    desc: Load the images and poses for each frame.
+    cmd: python3 scripts/load_measurements.py params.yaml
+    deps:
+      - scripts/load_measurements.py
+      - src/ground_texture_systems/__init__.py
+      - src/ground_texture_systems/measurement.py
+    params:
+      - paths
+    outs:
+      - intermediate_data/measurements.pkl
+  run:
+    foreach:
+      - jih
+      - kld
+      - kld_gray
+      - odometry
+      - original
+      - overlap
+      - single
+    do:
+      desc: Run the ${item} system
+      cmd: python3 scripts/run_system.py ${item} params.yaml
+      deps:
+        - intermediate_data/measurements.pkl
+        - scripts/run_system.py
+        - src/ground_texture_systems/__init__.py
+        - src/ground_texture_systems/components/
+        - src/ground_texture_systems/measurement.py
+        - src/ground_texture_systems/systems/${item}.py
+        - src/ground_texture_systems/systems/base.py
+        - src/ground_texture_systems/systems/system_constructor.py
+      params:
+        - system
+      outs:
+        - intermediate_data/poses/${item}.pkl
+  map:
+    desc: Map the pose estimates for all systems.
+    cmd: python3 scripts/plot_systems.py params.yaml
+    deps:
+      - intermediate_data/measurements.pkl
+      - intermediate_data/poses/
+      - scripts/plot_systems.py
+      - src/ground_texture_systems/measurement.py
+    params:
+      - plotting
+    outs:
+      - output/maps/
+  evaluate:
+    desc: Calculate errors for all systems.
+    cmd: python3 scripts/evaluate_systems.py
+    deps:
+      - intermediate_data/measurements.pkl
+      - intermediate_data/poses/
+      - scripts/evaluate_systems.py
+      - src/ground_texture_systems/measurement.py
+    metrics:
+      - output/metrics.json
+  map_ground_truth:
+    desc: Put all paths on a single map.
+    cmd: python3 scripts/plot_ground_truth.py
+    deps:
+      - scripts/plot_ground_truth.py
+      - intermediate_data/measurements.pkl
+    plots:
+      - output/ground_truth.png
+  time:
+    foreach:
+      - kld
+      - odometry
+      - original
+      - single
+    do:
+      desc: Time the ${item} system.
+      cmd: python3 scripts/time_system.py ${item} params.yaml
+      deps:
+        - intermediate_data/measurements.pkl
+        - scripts/time_system.py
+        - src/ground_texture_systems/__init__.py
+        - src/ground_texture_systems/components/
+        - src/ground_texture_systems/measurement.py
+        - src/ground_texture_systems/systems/${item}.py
+        - src/ground_texture_systems/systems/base.py
+        - src/ground_texture_systems/systems/system_constructor.py
+      params:
+        - system
+        - timing
+      outs:
+        - intermediate_data/times/${item}.pkl
+  plot_time:
+    desc: Create the CSV and plot for system runtimes.
+    cmd: python3 scripts/plot_time.py params.yaml
+    deps:
+      - scripts/plot_time.py
+      - intermediate_data/times/
+    params:
+      - plotting
+    outs:
+      - output/times/times.csv
+    plots:
+      - output/times/times.png
+  insights:
+    desc: Create data to aid understanding KLD's impact.
+    cmd: python3 scripts/kld_insights.py params.yaml
+    deps:
+      - scripts/kld_insights.py
+      - intermediate_data/measurements.pkl
+      - src/ground_texture_systems/__init__.py
+      - src/ground_texture_systems/components/
+      - src/ground_texture_systems/measurement.py
+      - src/ground_texture_systems/systems/kld_data.py
+      - src/ground_texture_systems/systems/base.py
+      - src/ground_texture_systems/systems/system_constructor.py
+    params:
+      - system
+    outs:
+      - intermediate_data/loop_insights.pkl
+      - intermediate_data/kld_scores.pkl
+  plot_insights:
+    desc: Create the loop insight figures.
+    cmd: python3 scripts/plot_kld_insights.py
+    deps:
+      - scripts/plot_kld_insights.py
+      - intermediate_data/loop_insights.pkl
+    outs:
+      - output/loop_insights/
+  map_kld_health:
+    desc: Plot a KLD health map.
+    cmd: python3 scripts/plot_kld_map.py params.yaml
+    deps:
+      - scripts/plot_kld_map.py
+      - intermediate_data/kld_scores.pkl
+      - intermediate_data/poses/kld.pkl
+    outs:
+      - output/health/
+  gather_video:
+    desc: Generate the data for making a video.
+    cmd: python3 scripts/gather_video_data.py params.yaml
+    deps:
+      - intermediate_data/measurements.pkl
+      - scripts/gather_video_data.py
+      - src/ground_texture_systems/__init__.py
+      - src/ground_texture_systems/components/
+      - src/ground_texture_systems/measurement.py
+      - src/ground_texture_systems/systems/base.py
+      - src/ground_texture_systems/systems/kld.py
+      - src/ground_texture_systems/systems/original.py
+      - src/ground_texture_systems/systems/system_constructor.py
+    outs:
+      - intermediate_data/frame_data.pkl
+  generate_video:
+    desc: Create the actual video file and graphics.
+    cmd: python3 scripts/generate_video.py params.yaml
+    deps:
+      - intermediate_data/frame_data.pkl
+      - scripts/gather_video_data.py
+      - scripts/generate_video.py
+    params:
+      - plotting
+    outs:
+      - output/video.mp4

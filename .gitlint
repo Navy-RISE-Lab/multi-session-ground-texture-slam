@@ -1,0 +1,4 @@
+[general]
+contrib = contrib-title-conventional-commits
+ignore = body-is-missing
+ignore-merge-commits = true

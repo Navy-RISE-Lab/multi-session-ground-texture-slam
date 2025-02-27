@@ -1,0 +1,44 @@
+paths:
+  - /data/rise_carpet_set_2/path0_meters.txt
+  - /data/rise_carpet_set_2/path1_meters.txt
+  - /data/rise_carpet_set_2/path2_meters.txt
+  - /data/rise_carpet_set_2/path3_meters.txt
+  - /data/rise_carpet_set_2/path4_meters.txt
+system:
+  camera:
+    intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+    pose: /data/rise_carpet_set_2/camera_pose.txt
+  bag_of_words:
+    vocabulary_file: /data/vocabulary.bow
+  image_parser:
+    edge_threshold: 31
+    fast_threshold: 12
+    features: 1000
+    first_level: 0
+    levels: 2
+    patch_size: 36
+    scale_factor: 1.75
+    use_harris: true
+    WTA_K: 2
+  keypoint_matcher:
+    match_threshold: 0.5
+  sliding_window: 30
+  thresholds:
+    bag_of_words: 0.1
+    covariance: 1.1
+    keypoints: 4
+  transform_estimator:
+    sigma: 1.0
+    type: geman_mcclure
+    weight: 0.354
+timing:
+  samples_per_data_point: 10
+plotting:
+  labels:
+    jih: JIH
+    kld: KLD
+    kld_gray: KLD (Gray)
+    odometry: Odometry
+    original: Original (Single)
+    overlap: Overlap
+    single: Original (Many)

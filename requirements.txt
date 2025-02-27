@@ -1,0 +1,11 @@
+dvc
+gitlint
+gtsam
+gtsam-stubs
+matplotlib
+numpy<2.0
+opencv-contrib-python-headless
+pandas
+ruff
+scikit-learn
+shapely
