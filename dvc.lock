@@ -1,0 +1,1585 @@
+schema: '2.0'
+stages:
+  load_measurements:
+    cmd: python3 scripts/load_measurements.py params.yaml
+    deps:
+    - path: scripts/load_measurements.py
+      hash: md5
+      md5: b762a20177634d57e7e9c158bbff8581
+      size: 3409
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    params:
+      params.yaml:
+        paths:
+        - /data/rise_carpet_set_2/path0_meters.txt
+        - /data/rise_carpet_set_2/path1_meters.txt
+        - /data/rise_carpet_set_2/path2_meters.txt
+        - /data/rise_carpet_set_2/path3_meters.txt
+        - /data/rise_carpet_set_2/path4_meters.txt
+    outs:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+  run@odom:
+    cmd: python3 scripts/run_system.py odom params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/run_system.py
+      hash: md5
+      md5: b74b0639ec2fff4996959ef0212c2b8b
+      size: 2348
+    - path: src/ground_texture_systems/
+      hash: md5
+      md5: 4000f54cf22ca1f3279e03c0ff0b5a70.dir
+      size: 46819
+      nfiles: 17
+    params:
+      params.yaml:
+        bag_of_words:
+          vocabulary_file: /data/vocabulary.bow
+        camera:
+          intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+          pose: /data/rise_carpet_set_2/camera_pose.txt
+        image_parser:
+          edge_threshold: 31
+          fast_threshold: 12
+          features: 1000
+          first_level: 0
+          levels: 2
+          patch_size: 36
+          scale_factor: 1.75
+          use_harris: true
+          WTA_K: 2
+        keypoint_matcher:
+          match_threshold: 0.5
+        sliding_window: 30
+        thresholds:
+          bag_of_words: 0.1
+          covariance: 1.1
+          keypoints: 4
+        transform_estimator:
+          sigma: 1.0
+          type: geman_mcclure
+          weight: 0.354
+    outs:
+    - path: intermediate_data/odom.pkl
+      hash: md5
+      md5: 6188ed5b0620e1c5ba95667bb883be51
+      size: 178148
+  run@slam:
+    cmd: python3 scripts/run_system.py slam params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/run_system.py
+      hash: md5
+      md5: b74b0639ec2fff4996959ef0212c2b8b
+      size: 2348
+    - path: src/ground_texture_systems/
+      hash: md5
+      md5: 4000f54cf22ca1f3279e03c0ff0b5a70.dir
+      size: 46819
+      nfiles: 17
+    params:
+      params.yaml:
+        bag_of_words:
+          vocabulary_file: /data/vocabulary.bow
+        camera:
+          intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+          pose: /data/rise_carpet_set_2/camera_pose.txt
+        image_parser:
+          edge_threshold: 31
+          fast_threshold: 12
+          features: 1000
+          first_level: 0
+          levels: 2
+          patch_size: 36
+          scale_factor: 1.75
+          use_harris: true
+          WTA_K: 2
+        keypoint_matcher:
+          match_threshold: 0.5
+        sliding_window: 30
+        thresholds:
+          bag_of_words: 0.1
+          covariance: 1.1
+          keypoints: 4
+        transform_estimator:
+          sigma: 1.0
+          type: geman_mcclure
+          weight: 0.354
+    outs:
+    - path: intermediate_data/slam.pkl
+      hash: md5
+      md5: 7e5a402e1ee1601da4d7f957344f8383
+      size: 178194
+  run@multi:
+    cmd: python3 scripts/run_system.py multi params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/run_system.py
+      hash: md5
+      md5: b74b0639ec2fff4996959ef0212c2b8b
+      size: 2348
+    - path: src/ground_texture_systems/
+      hash: md5
+      md5: 4000f54cf22ca1f3279e03c0ff0b5a70.dir
+      size: 46819
+      nfiles: 17
+    params:
+      params.yaml:
+        bag_of_words:
+          vocabulary_file: /data/vocabulary.bow
+        camera:
+          intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+          pose: /data/rise_carpet_set_2/camera_pose.txt
+        image_parser:
+          edge_threshold: 31
+          fast_threshold: 12
+          features: 1000
+          first_level: 0
+          levels: 2
+          patch_size: 36
+          scale_factor: 1.75
+          use_harris: true
+          WTA_K: 2
+        keypoint_matcher:
+          match_threshold: 0.5
+        sliding_window: 30
+        thresholds:
+          bag_of_words: 0.1
+          covariance: 1.1
+          keypoints: 4
+        transform_estimator:
+          sigma: 1.0
+          type: geman_mcclure
+          weight: 0.354
+    outs:
+    - path: intermediate_data/multi.pkl
+      hash: md5
+      md5: 8b3c96873c7896089d9343da7b26202f
+      size: 178229
+  evaluate:
+    cmd: python3 scripts/evaluate_systems.py
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: intermediate_data/poses/
+      hash: md5
+      md5: bf4b48b0d821834177679c2287b40b9c.dir
+      size: 1247593
+      nfiles: 8
+    - path: scripts/evaluate_systems.py
+      hash: md5
+      md5: 42ea5b71c870cf03ae036602a1d1878a
+      size: 3399
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    outs:
+    - path: output/metrics.json
+      hash: md5
+      md5: dded39d63361c7f0e464dbeebfdf0bd7
+      size: 453
+  plot:
+    cmd: python3 scripts/plot_systems.py
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: intermediate_data/multi.pkl
+      hash: md5
+      md5: 8b3c96873c7896089d9343da7b26202f
+      size: 178229
+    - path: intermediate_data/odom.pkl
+      hash: md5
+      md5: 6188ed5b0620e1c5ba95667bb883be51
+      size: 178148
+    - path: intermediate_data/single.pkl
+      hash: md5
+      md5: a90f1f7f40e2ed968cd8e7af8bbb8106
+      size: 178234
+    - path: intermediate_data/slam.pkl
+      hash: md5
+      md5: 7e5a402e1ee1601da4d7f957344f8383
+      size: 178194
+    outs:
+    - path: output/maps
+      hash: md5
+      md5: 1ceaa377542f56258f699d0de6d585be.dir
+      size: 5460064
+      nfiles: 20
+  run_single:
+    cmd: python3 scripts/run_individual_sessions.py params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/run_individual_sessions.py
+      hash: md5
+      md5: b5dce7f53e2c5e5b3a55342fc0692939
+      size: 1839
+    - path: src/ground_texture_systems/
+      hash: md5
+      md5: 4000f54cf22ca1f3279e03c0ff0b5a70.dir
+      size: 46819
+      nfiles: 17
+    params:
+      params.yaml:
+        bag_of_words:
+          vocabulary_file: /data/vocabulary.bow
+        camera:
+          intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+          pose: /data/rise_carpet_set_2/camera_pose.txt
+        image_parser:
+          edge_threshold: 31
+          fast_threshold: 12
+          features: 1000
+          first_level: 0
+          levels: 2
+          patch_size: 36
+          scale_factor: 1.75
+          use_harris: true
+          WTA_K: 2
+        keypoint_matcher:
+          match_threshold: 0.5
+        sliding_window: 30
+        thresholds:
+          bag_of_words: 0.1
+          covariance: 1.1
+          keypoints: 4
+        transform_estimator:
+          sigma: 1.0
+          type: geman_mcclure
+          weight: 0.354
+    outs:
+    - path: intermediate_data/single.pkl
+      hash: md5
+      md5: a90f1f7f40e2ed968cd8e7af8bbb8106
+      size: 178234
+  kld_matrix:
+    cmd: python3 scripts/kld_session_comparison.py
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/kld_session_comparison.py
+      hash: md5
+      md5: ee914b972566619de6a9cd91c1c7e580
+      size: 2996
+    outs:
+    - path: output/kld_compare.png
+      hash: md5
+      md5: 323ef7de2a76f9a228dac6ef59db506c
+      size: 170142
+  run@odometry:
+    cmd: python3 scripts/run_system.py odometry params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/run_system.py
+      hash: md5
+      md5: a285b508954e1a144760c4c102fd8558
+      size: 1964
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/odometry.py
+      hash: md5
+      md5: 664aa34e7d396c3b5995cd7953632279
+      size: 2096
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: b2500fca7897b2af23e403a6339af294
+      size: 4247
+    params:
+      params.yaml:
+        system:
+          camera:
+            intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+            pose: /data/rise_carpet_set_2/camera_pose.txt
+          bag_of_words:
+            vocabulary_file: /data/vocabulary.bow
+          image_parser:
+            edge_threshold: 31
+            fast_threshold: 12
+            features: 1000
+            first_level: 0
+            levels: 2
+            patch_size: 36
+            scale_factor: 1.75
+            use_harris: true
+            WTA_K: 2
+          keypoint_matcher:
+            match_threshold: 0.5
+          sliding_window: 30
+          thresholds:
+            bag_of_words: 0.1
+            covariance: 1.1
+            keypoints: 4
+          transform_estimator:
+            sigma: 1.0
+            type: geman_mcclure
+            weight: 0.354
+    outs:
+    - path: intermediate_data/poses/odometry.pkl
+      hash: md5
+      md5: 6188ed5b0620e1c5ba95667bb883be51
+      size: 178148
+  map:
+    cmd: python3 scripts/plot_systems.py params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: intermediate_data/poses/
+      hash: md5
+      md5: bf4b48b0d821834177679c2287b40b9c.dir
+      size: 1247593
+      nfiles: 8
+    - path: scripts/plot_systems.py
+      hash: md5
+      md5: e3655ed248d905f84c71f66d6fcc6d07
+      size: 2842
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    params:
+      params.yaml:
+        plotting:
+          labels:
+            jih: JIH
+            kld: KLD
+            kld_gray: KLD (Gray)
+            odometry: Odometry
+            original: Original (Single)
+            overlap: Overlap
+            single: Original (Many)
+    outs:
+    - path: output/maps/
+      hash: md5
+      md5: 2431e0701dc76d9b3a4b254f87cbc158.dir
+      size: 10948433
+      nfiles: 35
+  run@original:
+    cmd: python3 scripts/run_system.py original params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/run_system.py
+      hash: md5
+      md5: a285b508954e1a144760c4c102fd8558
+      size: 1964
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/original.py
+      hash: md5
+      md5: 7f910c5051e78c948073b52378aba23d
+      size: 4744
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: b2500fca7897b2af23e403a6339af294
+      size: 4247
+    params:
+      params.yaml:
+        system:
+          camera:
+            intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+            pose: /data/rise_carpet_set_2/camera_pose.txt
+          bag_of_words:
+            vocabulary_file: /data/vocabulary.bow
+          image_parser:
+            edge_threshold: 31
+            fast_threshold: 12
+            features: 1000
+            first_level: 0
+            levels: 2
+            patch_size: 36
+            scale_factor: 1.75
+            use_harris: true
+            WTA_K: 2
+          keypoint_matcher:
+            match_threshold: 0.5
+          sliding_window: 30
+          thresholds:
+            bag_of_words: 0.1
+            covariance: 1.1
+            keypoints: 4
+          transform_estimator:
+            sigma: 1.0
+            type: geman_mcclure
+            weight: 0.354
+    outs:
+    - path: intermediate_data/poses/original.pkl
+      hash: md5
+      md5: 27e3e2b5263737ef9fc8b43fca41c357
+      size: 178194
+  run@single:
+    cmd: python3 scripts/run_system.py single params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/run_system.py
+      hash: md5
+      md5: a285b508954e1a144760c4c102fd8558
+      size: 1964
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/single.py
+      hash: md5
+      md5: 1a595e8b79a9e31e4faf9ee26058de97
+      size: 6562
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: b2500fca7897b2af23e403a6339af294
+      size: 4247
+    params:
+      params.yaml:
+        system:
+          camera:
+            intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+            pose: /data/rise_carpet_set_2/camera_pose.txt
+          bag_of_words:
+            vocabulary_file: /data/vocabulary.bow
+          image_parser:
+            edge_threshold: 31
+            fast_threshold: 12
+            features: 1000
+            first_level: 0
+            levels: 2
+            patch_size: 36
+            scale_factor: 1.75
+            use_harris: true
+            WTA_K: 2
+          keypoint_matcher:
+            match_threshold: 0.5
+          sliding_window: 30
+          thresholds:
+            bag_of_words: 0.1
+            covariance: 1.1
+            keypoints: 4
+          transform_estimator:
+            sigma: 1.0
+            type: geman_mcclure
+            weight: 0.354
+    outs:
+    - path: intermediate_data/poses/single.pkl
+      hash: md5
+      md5: ff680714ace73f30fe7c0a889255ecee
+      size: 178234
+  run@kld:
+    cmd: python3 scripts/run_system.py kld params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/run_system.py
+      hash: md5
+      md5: a285b508954e1a144760c4c102fd8558
+      size: 1964
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/kld.py
+      hash: md5
+      md5: b99ebf45dc1ffcd0477564d0f11a6dd9
+      size: 8076
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: b2500fca7897b2af23e403a6339af294
+      size: 4247
+    params:
+      params.yaml:
+        system:
+          camera:
+            intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+            pose: /data/rise_carpet_set_2/camera_pose.txt
+          bag_of_words:
+            vocabulary_file: /data/vocabulary.bow
+          image_parser:
+            edge_threshold: 31
+            fast_threshold: 12
+            features: 1000
+            first_level: 0
+            levels: 2
+            patch_size: 36
+            scale_factor: 1.75
+            use_harris: true
+            WTA_K: 2
+          keypoint_matcher:
+            match_threshold: 0.5
+          sliding_window: 30
+          thresholds:
+            bag_of_words: 0.1
+            covariance: 1.1
+            keypoints: 4
+          transform_estimator:
+            sigma: 1.0
+            type: geman_mcclure
+            weight: 0.354
+    outs:
+    - path: intermediate_data/poses/kld.pkl
+      hash: md5
+      md5: 225c43b2329519a8e98bc2ba2081ec10
+      size: 178186
+  run@overlap:
+    cmd: python3 scripts/run_system.py overlap params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/run_system.py
+      hash: md5
+      md5: a285b508954e1a144760c4c102fd8558
+      size: 1964
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/overlap.py
+      hash: md5
+      md5: 1b7b66f03d555d877565e122a03b3317
+      size: 8113
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: b2500fca7897b2af23e403a6339af294
+      size: 4247
+    params:
+      params.yaml:
+        system:
+          camera:
+            intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+            pose: /data/rise_carpet_set_2/camera_pose.txt
+          bag_of_words:
+            vocabulary_file: /data/vocabulary.bow
+          image_parser:
+            edge_threshold: 31
+            fast_threshold: 12
+            features: 1000
+            first_level: 0
+            levels: 2
+            patch_size: 36
+            scale_factor: 1.75
+            use_harris: true
+            WTA_K: 2
+          keypoint_matcher:
+            match_threshold: 0.5
+          sliding_window: 30
+          thresholds:
+            bag_of_words: 0.1
+            covariance: 1.1
+            keypoints: 4
+          transform_estimator:
+            sigma: 1.0
+            type: geman_mcclure
+            weight: 0.354
+    outs:
+    - path: intermediate_data/poses/overlap.pkl
+      hash: md5
+      md5: 579cead0e84f7795c1224cb007b504e6
+      size: 178337
+  time@odometry:
+    cmd: python3 scripts/time_system.py odometry params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/time_system.py
+      hash: md5
+      md5: 6a2e690e87d61486532bb6d234ff1a00
+      size: 2365
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/odometry.py
+      hash: md5
+      md5: 664aa34e7d396c3b5995cd7953632279
+      size: 2096
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: b2500fca7897b2af23e403a6339af294
+      size: 4247
+    params:
+      params.yaml:
+        system:
+          camera:
+            intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+            pose: /data/rise_carpet_set_2/camera_pose.txt
+          bag_of_words:
+            vocabulary_file: /data/vocabulary.bow
+          image_parser:
+            edge_threshold: 31
+            fast_threshold: 12
+            features: 1000
+            first_level: 0
+            levels: 2
+            patch_size: 36
+            scale_factor: 1.75
+            use_harris: true
+            WTA_K: 2
+          keypoint_matcher:
+            match_threshold: 0.5
+          sliding_window: 30
+          thresholds:
+            bag_of_words: 0.1
+            covariance: 1.1
+            keypoints: 4
+          transform_estimator:
+            sigma: 1.0
+            type: geman_mcclure
+            weight: 0.354
+        timing:
+          samples_per_data_point: 10
+    outs:
+    - path: intermediate_data/times/odometry.pkl
+      hash: md5
+      md5: 2ae8336e65cc2f2f101832e3ba4edfe8
+      size: 13743
+  time@original:
+    cmd: python3 scripts/time_system.py original params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/time_system.py
+      hash: md5
+      md5: 6a2e690e87d61486532bb6d234ff1a00
+      size: 2365
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/original.py
+      hash: md5
+      md5: 7f910c5051e78c948073b52378aba23d
+      size: 4744
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: b2500fca7897b2af23e403a6339af294
+      size: 4247
+    params:
+      params.yaml:
+        system:
+          camera:
+            intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+            pose: /data/rise_carpet_set_2/camera_pose.txt
+          bag_of_words:
+            vocabulary_file: /data/vocabulary.bow
+          image_parser:
+            edge_threshold: 31
+            fast_threshold: 12
+            features: 1000
+            first_level: 0
+            levels: 2
+            patch_size: 36
+            scale_factor: 1.75
+            use_harris: true
+            WTA_K: 2
+          keypoint_matcher:
+            match_threshold: 0.5
+          sliding_window: 30
+          thresholds:
+            bag_of_words: 0.1
+            covariance: 1.1
+            keypoints: 4
+          transform_estimator:
+            sigma: 1.0
+            type: geman_mcclure
+            weight: 0.354
+        timing:
+          samples_per_data_point: 10
+    outs:
+    - path: intermediate_data/times/original.pkl
+      hash: md5
+      md5: 36b7c8fad157c388c801504329028509
+      size: 13743
+  time_output:
+    cmd: python3 scripts/time_output.py
+    deps:
+    - path: intermediate_data/times/
+      hash: md5
+      md5: f06f8edba49afa4c52ee79f04320c3cb.dir
+      size: 55021
+      nfiles: 5
+    - path: scripts/time_output.py
+      hash: md5
+      md5: c5d422254ca9f1aa210db12d34d5905f
+      size: 1404
+    outs:
+    - path: output/times/times.csv
+      hash: md5
+      md5: de142d74395c1f7cf50e1c289042fc58
+      size: 97483
+    - path: output/times/times.png
+      hash: md5
+      md5: d5ccfd0359c78dc23664c417b8d82c58
+      size: 561432
+  time@kld:
+    cmd: python3 scripts/time_system.py kld params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/time_system.py
+      hash: md5
+      md5: 6a2e690e87d61486532bb6d234ff1a00
+      size: 2365
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/kld.py
+      hash: md5
+      md5: b99ebf45dc1ffcd0477564d0f11a6dd9
+      size: 8076
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: b2500fca7897b2af23e403a6339af294
+      size: 4247
+    params:
+      params.yaml:
+        system:
+          camera:
+            intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+            pose: /data/rise_carpet_set_2/camera_pose.txt
+          bag_of_words:
+            vocabulary_file: /data/vocabulary.bow
+          image_parser:
+            edge_threshold: 31
+            fast_threshold: 12
+            features: 1000
+            first_level: 0
+            levels: 2
+            patch_size: 36
+            scale_factor: 1.75
+            use_harris: true
+            WTA_K: 2
+          keypoint_matcher:
+            match_threshold: 0.5
+          sliding_window: 30
+          thresholds:
+            bag_of_words: 0.1
+            covariance: 1.1
+            keypoints: 4
+          transform_estimator:
+            sigma: 1.0
+            type: geman_mcclure
+            weight: 0.354
+        timing:
+          samples_per_data_point: 10
+    outs:
+    - path: intermediate_data/times/kld.pkl
+      hash: md5
+      md5: 9a86f685ca51c7be9ed91f32de4f46bc
+      size: 13743
+  run@jih:
+    cmd: python3 scripts/run_system.py jih params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/run_system.py
+      hash: md5
+      md5: a285b508954e1a144760c4c102fd8558
+      size: 1964
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/jih.py
+      hash: md5
+      md5: 6dfdc5b74478ffe79f62fc09bedc32b0
+      size: 7180
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: b2500fca7897b2af23e403a6339af294
+      size: 4247
+    params:
+      params.yaml:
+        system:
+          camera:
+            intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+            pose: /data/rise_carpet_set_2/camera_pose.txt
+          bag_of_words:
+            vocabulary_file: /data/vocabulary.bow
+          image_parser:
+            edge_threshold: 31
+            fast_threshold: 12
+            features: 1000
+            first_level: 0
+            levels: 2
+            patch_size: 36
+            scale_factor: 1.75
+            use_harris: true
+            WTA_K: 2
+          keypoint_matcher:
+            match_threshold: 0.5
+          sliding_window: 30
+          thresholds:
+            bag_of_words: 0.1
+            covariance: 1.1
+            keypoints: 4
+          transform_estimator:
+            sigma: 1.0
+            type: geman_mcclure
+            weight: 0.354
+    outs:
+    - path: intermediate_data/poses/jih.pkl
+      hash: md5
+      md5: bae396a71c9abaa8ed9c18b203167e68
+      size: 178216
+  run@kld_gray:
+    cmd: python3 scripts/run_system.py kld_gray params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/run_system.py
+      hash: md5
+      md5: a285b508954e1a144760c4c102fd8558
+      size: 1964
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/kld_gray.py
+      hash: md5
+      md5: 92849629a66db09be88745591a73571a
+      size: 7870
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: b2500fca7897b2af23e403a6339af294
+      size: 4247
+    params:
+      params.yaml:
+        system:
+          camera:
+            intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+            pose: /data/rise_carpet_set_2/camera_pose.txt
+          bag_of_words:
+            vocabulary_file: /data/vocabulary.bow
+          image_parser:
+            edge_threshold: 31
+            fast_threshold: 12
+            features: 1000
+            first_level: 0
+            levels: 2
+            patch_size: 36
+            scale_factor: 1.75
+            use_harris: true
+            WTA_K: 2
+          keypoint_matcher:
+            match_threshold: 0.5
+          sliding_window: 30
+          thresholds:
+            bag_of_words: 0.1
+            covariance: 1.1
+            keypoints: 4
+          transform_estimator:
+            sigma: 1.0
+            type: geman_mcclure
+            weight: 0.354
+    outs:
+    - path: intermediate_data/poses/kld_gray.pkl
+      hash: md5
+      md5: 12bbf18ac5ccb926822256a6ebac87e7
+      size: 178193
+  time@single:
+    cmd: python3 scripts/time_system.py single params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/time_system.py
+      hash: md5
+      md5: 6a2e690e87d61486532bb6d234ff1a00
+      size: 2365
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/single.py
+      hash: md5
+      md5: 1a595e8b79a9e31e4faf9ee26058de97
+      size: 6562
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: b2500fca7897b2af23e403a6339af294
+      size: 4247
+    params:
+      params.yaml:
+        system:
+          camera:
+            intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+            pose: /data/rise_carpet_set_2/camera_pose.txt
+          bag_of_words:
+            vocabulary_file: /data/vocabulary.bow
+          image_parser:
+            edge_threshold: 31
+            fast_threshold: 12
+            features: 1000
+            first_level: 0
+            levels: 2
+            patch_size: 36
+            scale_factor: 1.75
+            use_harris: true
+            WTA_K: 2
+          keypoint_matcher:
+            match_threshold: 0.5
+          sliding_window: 30
+          thresholds:
+            bag_of_words: 0.1
+            covariance: 1.1
+            keypoints: 4
+          transform_estimator:
+            sigma: 1.0
+            type: geman_mcclure
+            weight: 0.354
+        timing:
+          samples_per_data_point: 10
+    outs:
+    - path: intermediate_data/times/single.pkl
+      hash: md5
+      md5: 21044dd446b924114723fc85b510ec33
+      size: 13743
+  time@kld_gray:
+    cmd: python3 scripts/time_system.py kld_gray params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/time_system.py
+      hash: md5
+      md5: 76a4290da86c778c7caf16bd1e6b11f2
+      size: 3793
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/kld_gray.py
+      hash: md5
+      md5: 92849629a66db09be88745591a73571a
+      size: 7870
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: 2de3b0e70e2d9da3c4e895334060af3e
+      size: 4101
+    params:
+      params.yaml:
+        system:
+          camera:
+            intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+            pose: /data/rise_carpet_set_2/camera_pose.txt
+          bag_of_words:
+            vocabulary_file: /data/vocabulary.bow
+          image_parser:
+            edge_threshold: 31
+            fast_threshold: 12
+            features: 1000
+            first_level: 0
+            levels: 2
+            patch_size: 36
+            scale_factor: 1.75
+            use_harris: true
+            WTA_K: 2
+          keypoint_matcher:
+            match_threshold: 0.5
+          sliding_window: 30
+          thresholds:
+            bag_of_words: 0.1
+            covariance: 1.1
+            keypoints: 4
+          transform_estimator:
+            sigma: 1.0
+            type: geman_mcclure
+            weight: 0.354
+        timing:
+          data_points: 5
+          samples_per_data_point: 1
+    outs:
+    - path: intermediate_data/times/kld_gray.pkl
+      hash: md5
+      md5: 0f7d6c66bac3667ce9d20c1b1d2389db
+      size: 241
+  plot_time:
+    cmd: python3 scripts/plot_time.py params.yaml
+    deps:
+    - path: intermediate_data/times/
+      hash: md5
+      md5: 24b187b30fdf08e6089319d228e8b362.dir
+      size: 55021
+      nfiles: 5
+    - path: scripts/plot_time.py
+      hash: md5
+      md5: cda3c94b0f37df8174d4345adf139d56
+      size: 1897
+    params:
+      params.yaml:
+        plotting:
+          labels:
+            jih: JIH
+            kld: KLD
+            kld_gray: KLD (Gray)
+            odometry: Odometry
+            original: Original (Single)
+            overlap: Overlap
+            single: Original (Many)
+    outs:
+    - path: output/times/times.csv
+      hash: md5
+      md5: 372113c574ab2a4e7817e2e2a38ddd96
+      size: 97809
+    - path: output/times/times.png
+      hash: md5
+      md5: 1a97d19e433c0381619037c4f7347109
+      size: 610620
+  map_ground_truth:
+    cmd: python3 scripts/plot_ground_truth.py
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/plot_ground_truth.py
+      hash: md5
+      md5: 036c23c087072006742972eae4df836e
+      size: 1278
+    outs:
+    - path: output/ground_truth.png
+      hash: md5
+      md5: 337cfde10e11b9bdd68dc7161df463a0
+      size: 571605
+  map_kld_health:
+    cmd: python3 scripts/plot_kld_map.py params.yaml
+    deps:
+    - path: intermediate_data/kld_scores.pkl
+      hash: md5
+      md5: 7251cf772b931ad294d9727aff2b52ae
+      size: 10521
+    - path: intermediate_data/poses/kld.pkl
+      hash: md5
+      md5: 225c43b2329519a8e98bc2ba2081ec10
+      size: 178186
+    - path: scripts/plot_kld_map.py
+      hash: md5
+      md5: 86030533478693bffd742207cde5ede2
+      size: 5326
+    outs:
+    - path: output/health/
+      hash: md5
+      md5: 51036f803d985ca0c2562dee022328ff.dir
+      size: 1877615
+      nfiles: 5
+  kld_insights:
+    cmd: python3 scripts/kld_insights.py params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/kld_insights.py
+      hash: md5
+      md5: 0755886996402ea7abad5e67401c9ac1
+      size: 5977
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/kld_data.py
+      hash: md5
+      md5: cec415bf4b35e42fc0aec1c7eaa48676
+      size: 9513
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: b2500fca7897b2af23e403a6339af294
+      size: 4247
+    params:
+      params.yaml:
+        system:
+          camera:
+            intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+            pose: /data/rise_carpet_set_2/camera_pose.txt
+          bag_of_words:
+            vocabulary_file: /data/vocabulary.bow
+          image_parser:
+            edge_threshold: 31
+            fast_threshold: 12
+            features: 1000
+            first_level: 0
+            levels: 2
+            patch_size: 36
+            scale_factor: 1.75
+            use_harris: true
+            WTA_K: 2
+          keypoint_matcher:
+            match_threshold: 0.5
+          sliding_window: 30
+          thresholds:
+            bag_of_words: 0.1
+            covariance: 1.1
+            keypoints: 4
+          transform_estimator:
+            sigma: 1.0
+            type: geman_mcclure
+            weight: 0.354
+    outs:
+    - path: output/loop_insights/kld.png
+      hash: md5
+      md5: 9bca894e075fdbbf0830897fd4096b4a
+      size: 141415
+    - path: output/loop_insights/original.png
+      hash: md5
+      md5: 82bb384b591cafdd65f13af4cde16f91
+      size: 153267
+  insights:
+    cmd: python3 scripts/kld_insights.py params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/kld_insights.py
+      hash: md5
+      md5: 5a3a2957db23e637b8f8564b1d6c5cac
+      size: 5165
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/kld_data.py
+      hash: md5
+      md5: 4e354216a88aedefdf3c3e74f52c4bf6
+      size: 10922
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: b2500fca7897b2af23e403a6339af294
+      size: 4247
+    params:
+      params.yaml:
+        system:
+          camera:
+            intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+            pose: /data/rise_carpet_set_2/camera_pose.txt
+          bag_of_words:
+            vocabulary_file: /data/vocabulary.bow
+          image_parser:
+            edge_threshold: 31
+            fast_threshold: 12
+            features: 1000
+            first_level: 0
+            levels: 2
+            patch_size: 36
+            scale_factor: 1.75
+            use_harris: true
+            WTA_K: 2
+          keypoint_matcher:
+            match_threshold: 0.5
+          sliding_window: 30
+          thresholds:
+            bag_of_words: 0.1
+            covariance: 1.1
+            keypoints: 4
+          transform_estimator:
+            sigma: 1.0
+            type: geman_mcclure
+            weight: 0.354
+    outs:
+    - path: intermediate_data/kld_scores.pkl
+      hash: md5
+      md5: 7251cf772b931ad294d9727aff2b52ae
+      size: 10521
+    - path: intermediate_data/loop_insights.pkl
+      hash: md5
+      md5: 653fa43e2c80e3971c7b924db99daecd
+      size: 150536823
+  plot_insights:
+    cmd: python3 scripts/plot_kld_insights.py
+    deps:
+    - path: intermediate_data/loop_insights.pkl
+      hash: md5
+      md5: 653fa43e2c80e3971c7b924db99daecd
+      size: 150536823
+    - path: scripts/plot_kld_insights.py
+      hash: md5
+      md5: 84e1f36a8bcbb6e799d1d210b7722a86
+      size: 7196
+    outs:
+    - path: output/loop_insights/
+      hash: md5
+      md5: 5dddd4056a7ea7a0cde3978a9757e497.dir
+      size: 66695235
+      nfiles: 5
+  run@kld_data:
+    cmd: python3 scripts/run_system.py kld_data params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/run_system.py
+      hash: md5
+      md5: a285b508954e1a144760c4c102fd8558
+      size: 1964
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/kld_data.py
+      hash: md5
+      md5: cb1519b108f32aa13dd7a927e43d6ddf
+      size: 10732
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: b2500fca7897b2af23e403a6339af294
+      size: 4247
+    params:
+      params.yaml:
+        system:
+          camera:
+            intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
+            pose: /data/rise_carpet_set_2/camera_pose.txt
+          bag_of_words:
+            vocabulary_file: /data/vocabulary.bow
+          image_parser:
+            edge_threshold: 31
+            fast_threshold: 12
+            features: 1000
+            first_level: 0
+            levels: 2
+            patch_size: 36
+            scale_factor: 1.75
+            use_harris: true
+            WTA_K: 2
+          keypoint_matcher:
+            match_threshold: 0.5
+          sliding_window: 30
+          thresholds:
+            bag_of_words: 0.1
+            covariance: 1.1
+            keypoints: 4
+          transform_estimator:
+            sigma: 1.0
+            type: geman_mcclure
+            weight: 0.354
+    outs:
+    - path: intermediate_data/poses/kld_data.pkl
+      hash: md5
+      md5: 225c43b2329519a8e98bc2ba2081ec10
+      size: 178186
+  gather_video:
+    cmd: python3 scripts/gather_video_data.py params.yaml
+    deps:
+    - path: intermediate_data/measurements.pkl
+      hash: md5
+      md5: 3be8077c837024cd6984952577a58ea5
+      size: 3146205899
+    - path: scripts/gather_video_data.py
+      hash: md5
+      md5: 49b35931cdb701d03b019aa2bec7d392
+      size: 3024
+    - path: src/ground_texture_systems/__init__.py
+      hash: md5
+      md5: fd3d9a5b979eb133bbab6087f8c6b6ff
+      size: 223
+    - path: src/ground_texture_systems/components/
+      hash: md5
+      md5: 1198b6dd32a628b6b0a08e67253c16db.dir
+      size: 16394
+      nfiles: 10
+    - path: src/ground_texture_systems/measurement.py
+      hash: md5
+      md5: 9fda77f46c0c5fe9515ac5dfac7fe996
+      size: 353
+    - path: src/ground_texture_systems/systems/base.py
+      hash: md5
+      md5: 70a1a250a9952c2a1d51f0ec0e081da5
+      size: 8055
+    - path: src/ground_texture_systems/systems/kld.py
+      hash: md5
+      md5: b99ebf45dc1ffcd0477564d0f11a6dd9
+      size: 8076
+    - path: src/ground_texture_systems/systems/original.py
+      hash: md5
+      md5: 7f910c5051e78c948073b52378aba23d
+      size: 4744
+    - path: src/ground_texture_systems/systems/system_constructor.py
+      hash: md5
+      md5: b2500fca7897b2af23e403a6339af294
+      size: 4247
+    outs:
+    - path: intermediate_data/frame_data.pkl
+      hash: md5
+      md5: 73f45c6be7c0a35add987edb34791b12
+      size: 3208631909
+  generate_video:
+    cmd: python3 scripts/generate_video.py params.yaml
+    deps:
+    - path: intermediate_data/frame_data.pkl
+      hash: md5
+      md5: 73f45c6be7c0a35add987edb34791b12
+      size: 3208631909
+    - path: scripts/gather_video_data.py
+      hash: md5
+      md5: 49b35931cdb701d03b019aa2bec7d392
+      size: 3024
+    - path: scripts/generate_video.py
+      hash: md5
+      md5: a1b591f1cb8841c0549829680459df6f
+      size: 4776
+    params:
+      params.yaml:
+        plotting:
+          labels:
+            jih: JIH
+            kld: KLD
+            kld_gray: KLD (Gray)
+            odometry: Odometry
+            original: Original (Single)
+            overlap: Overlap
+            single: Original (Many)
+    outs:
+    - path: output/video.mp4
+      hash: md5
+      md5: ef56f627dccf55beb80fa7fe07068d48
+      size: 5013480

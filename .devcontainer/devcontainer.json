@@ -8,7 +8,7 @@
     },
     "containerUser": "user",
     "mounts": [
-        "source=${localWorkspaceFolder}/../data,target=/data,type=bind,readonly"
+        "source=${localWorkspaceFolder}/../multi-session-ground-texture-data,target=/data,type=bind,readonly"
     ],
     "runArgs": [
         "--name",

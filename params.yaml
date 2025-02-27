@@ -1,13 +1,13 @@
 paths:
-  - /data/rise_carpet_set_2/path0_meters.txt
-  - /data/rise_carpet_set_2/path1_meters.txt
-  - /data/rise_carpet_set_2/path2_meters.txt
-  - /data/rise_carpet_set_2/path3_meters.txt
-  - /data/rise_carpet_set_2/path4_meters.txt
+  - /data/path0_meters.txt
+  - /data/path1_meters.txt
+  - /data/path2_meters.txt
+  - /data/path3_meters.txt
+  - /data/path4_meters.txt
 system:
   camera:
-    intrinsic_matrix: /data/rise_carpet_set_2/camera_matrix.txt
-    pose: /data/rise_carpet_set_2/camera_pose.txt
+    intrinsic_matrix: /data/camera_matrix.txt
+    pose: /data/camera_pose.txt
   bag_of_words:
     vocabulary_file: /data/vocabulary.bow
   image_parser:
